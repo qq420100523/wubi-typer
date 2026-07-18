@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		11F2B57080BA49B18AC0D31C /* wubi86_dict.txt in Resources */ = {isa = PBXBuildFile; fileRef = BB9395E4B5E64C4D86F9F2DC /* wubi86_dict.txt */; };
+		B631D7E1300BC76E00D1AEEC /* FrequentlyCharacters0-500.txt in Resources */ = {isa = PBXBuildFile; fileRef = B631D7E2300BC76E00D1AEED /* FrequentlyCharacters0-500.txt */; };
+		B631D7E3300BC76E00D1AEEE /* FrequentlyCharacters500-1000.txt in Resources */ = {isa = PBXBuildFile; fileRef = B631D7E4300BC76E00D1AEEF /* FrequentlyCharacters500-1000.txt */; };
+		B631D7E5300BC76E00D1AEF0 /* FrequentlyCharacters1000-15000.txt in Resources */ = {isa = PBXBuildFile; fileRef = B631D7E6300BC76E00D1AEF1 /* FrequentlyCharacters1000-15000.txt */; };
 		18C9FCEE76B340F58108CB88 /* KeyboardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525532FC07B647F7868700DB /* KeyboardLayout.swift */; };
 		1B6EA5C5D0C14D1896BF4F05 /* ArticleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0E2FA86BE94FCD894701AF /* ArticleData.swift */; };
 		27244A0EAB2E4CC6B3548DE8 /* TypingStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB26DC4A79244CEE83241707 /* TypingStats.swift */; };
@@ -27,17 +30,16 @@
 		AAE7B9439BEC4E788E77EC22 /* ScrollableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A241C7406EE4898838A2502 /* ScrollableTextView.swift */; };
 		AB55274F41234A649200A3CE /* RulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FB21925BFF47BCB71864E8 /* RulesView.swift */; };
 		B222C513F33E42D1984ECE34 /* WubiTypingTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5446DA82684A57837D33BE /* WubiTypingTrainerApp.swift */; };
+		B631D7DD300BC76E00D1AEE8 /* MistakeTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7D9300BC76E00D1AEE4 /* MistakeTrackerTests.swift */; };
+		B631D7DE300BC76E00D1AEE9 /* TypingStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DA300BC76E00D1AEE5 /* TypingStatsTests.swift */; };
+		B631D7DF300BC76E00D1AEEA /* WubiDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DB300BC76E00D1AEE6 /* WubiDictionaryTests.swift */; };
+		B631D7E0300BC76E00D1AEEB /* WubiTypingTrainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DC300BC76E00D1AEE7 /* WubiTypingTrainerTests.swift */; };
 		BF19BBBB6B3041BAA9293023 /* CumulativeStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38084FA3671B4D43AFE4D797 /* CumulativeStats.swift */; };
 		D490CC3A8E2843CCB16F9872 /* ZhihuModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B18371C2D64B87B19E1482 /* ZhihuModels.swift */; };
 		DBA709F9B5A342CE862AC5E4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EE737503FE4070B2763896 /* SettingsView.swift */; };
 		E3DA6FACDA8148E2BF53644C /* JianmaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56568FEB1C944DAC862C42EF /* JianmaView.swift */; };
 		E7CF11E790834FBD86D6731B /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3F5321FF7F48D7B6E667A7 /* PracticeView.swift */; };
 		F391BB6A07674FC6A2543A65 /* WubiDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C870B11DD97F4ACFA9EC5CC7 /* WubiDictionary.swift */; };
-/* Test target sources */
-		B631D7DD300BC76E00D1AEE8 /* MistakeTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7D9300BC76E00D1AEE4 /* MistakeTrackerTests.swift */; };
-		B631D7DE300BC76E00D1AEE9 /* TypingStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DA300BC76E00D1AEE5 /* TypingStatsTests.swift */; };
-		B631D7DF300BC76E00D1AEEA /* WubiDictionaryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DB300BC76E00D1AEE6 /* WubiDictionaryTests.swift */; };
-		B631D7E0300BC76E00D1AEEB /* WubiTypingTrainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DC300BC76E00D1AEE7 /* WubiTypingTrainerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +85,9 @@
 		EB26DC4A79244CEE83241707 /* TypingStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TypingStats.swift; path = Models/TypingStats.swift; sourceTree = SOURCE_ROOT; };
 		EEE5426F2A1E4B84923BC763 /* ZhihuDailyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZhihuDailyService.swift; path = Services/ZhihuDailyService.swift; sourceTree = SOURCE_ROOT; };
 		F5B18371C2D64B87B19E1482 /* ZhihuModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZhihuModels.swift; path = Models/ZhihuModels.swift; sourceTree = SOURCE_ROOT; };
+		B631D7E2300BC76E00D1AEED /* FrequentlyCharacters0-500.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = FrequentlyCharacters0-500.txt; path = Resources/FrequentlyCharacters0-500.txt; sourceTree = SOURCE_ROOT; };
+		B631D7E4300BC76E00D1AEEF /* FrequentlyCharacters500-1000.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = FrequentlyCharacters500-1000.txt; path = Resources/FrequentlyCharacters500-1000.txt; sourceTree = SOURCE_ROOT; };
+		B631D7E6300BC76E00D1AEF1 /* FrequentlyCharacters1000-15000.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = FrequentlyCharacters1000-15000.txt; path = Resources/FrequentlyCharacters1000-15000.txt; sourceTree = SOURCE_ROOT; };
 		FC823472EB7B4A43965279FF /* RadicalFontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RadicalFontManager.swift; path = Models/RadicalFontManager.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -104,7 +109,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		021034E08C684A78AF085CF4 /* Views */ = {
+		021034E08C684A78AF085CF4 		/* Views */ = {
 			isa = PBXGroup;
 			children = (
 				C3A35932497A48D593C7E788 /* ArticleListView.swift */,
@@ -119,9 +124,10 @@
 				13EE737503FE4070B2763896 /* SettingsView.swift */,
 			);
 			name = Views;
+			path = Views;
 			sourceTree = "<group>";
 		};
-		1CE2C03A4BF742CAA7D89532 /* Models */ = {
+		1CE2C03A4BF742CAA7D89532 		/* Models */ = {
 			isa = PBXGroup;
 			children = (
 				AD0E2FA86BE94FCD894701AF /* ArticleData.swift */,
@@ -136,6 +142,7 @@
 				F5B18371C2D64B87B19E1482 /* ZhihuModels.swift */,
 			);
 			name = Models;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		4FD3226FE81843CD86675892 = {
@@ -148,12 +155,13 @@
 			);
 			sourceTree = "<group>";
 		};
-		5477250F58A912887FD3A8BC /* Services */ = {
+		5477250F58A912887FD3A8BC 		/* Services */ = {
 			isa = PBXGroup;
 			children = (
 				EEE5426F2A1E4B84923BC763 /* ZhihuDailyService.swift */,
 			);
 			name = Services;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		739CC9DF8D6A473897FA327D /* Frameworks */ = {
@@ -163,12 +171,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		9D5E9D722F27425CB889A482 /* App */ = {
+		9D5E9D722F27425CB889A482 /* 		App */ = {
 			isa = PBXGroup;
 			children = (
 				9F5446DA82684A57837D33BE /* WubiTypingTrainerApp.swift */,
 			);
 			name = App;
+			path = App;
 			sourceTree = "<group>";
 		};
 		ADD06BD90B2A48AA82F55025 /* Resources */ = {
@@ -176,9 +185,13 @@
 			children = (
 				321FAED9AD2145C9843AF587 /* AppIcon.icns */,
 				BB9395E4B5E64C4D86F9F2DC /* wubi86_dict.txt */,
+				B631D7E2300BC76E00D1AEED /* FrequentlyCharacters0-500.txt */,
+				B631D7E4300BC76E00D1AEEF /* FrequentlyCharacters500-1000.txt */,
+				B631D7E6300BC76E00D1AEF1 /* FrequentlyCharacters1000-15000.txt */,
 				DABC1ECA8B0D49D7B9347BDF /* 黑体字根.ttf */,
 			);
 			name = Resources;
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		B631D7D8300BC76E00D1AEE3 /* WubiTypingTrainerTests */ = {
@@ -206,12 +219,13 @@
 			name = WubiTypingTrainer;
 			sourceTree = "<group>";
 		};
-		D85D3C26AF714A798802C1AB /* ViewModels */ = {
+		D85D3C26AF714A798802C1AB 		/* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				310DEC32BD8248298EEFD2A9 /* PracticeViewModel.swift */,
 			);
 			name = ViewModels;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		E579255F06C44458AEB76C14 /* Products */ = {
@@ -300,6 +314,9 @@
 			files = (
 				84969B4598684698BF96E784 /* AppIcon.icns in Resources */,
 				11F2B57080BA49B18AC0D31C /* wubi86_dict.txt in Resources */,
+				B631D7E1300BC76E00D1AEEC /* FrequentlyCharacters0-500.txt in Resources */,
+				B631D7E3300BC76E00D1AEEE /* FrequentlyCharacters500-1000.txt in Resources */,
+				B631D7E5300BC76E00D1AEF0 /* FrequentlyCharacters1000-15000.txt in Resources */,
 				A2C9A1F033714683A7C206C9 /* 黑体字根.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -492,8 +509,8 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				ENABLE_TESTABILITY = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Info.plist;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wubi.typingtrainer;

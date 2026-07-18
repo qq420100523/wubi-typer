@@ -114,6 +114,16 @@ final class PracticeViewModel {
 // MARK: - 模式管理
 
 extension PracticeViewModel {
+    fileprivate func loadFrequentChars(fileName: String) -> [String] {
+        guard let url = Bundle.main.url(forResource: fileName, withExtension: "txt"),
+              let content = try? String(contentsOf: url, encoding: .utf8)
+        else { return [] }
+        return content
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.count == 1 && !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+    }
+
     fileprivate func filteredChars() -> [String] {
         if limitToGB2312 {
             return wubiDict.allChars.filter { ch in
@@ -152,8 +162,15 @@ extension PracticeViewModel {
             session.poolIndex = 0
             if !available.isEmpty { showNextChar() }
 
-        case .common:
-            let chars = Array(filteredChars().prefix(100).shuffled())
+        case .common0_500, .common500_1000, .common1000_15000:
+            let fileName: String
+            switch mode {
+            case .common0_500: fileName = "FrequentlyCharacters0-500"
+            case .common500_1000: fileName = "FrequentlyCharacters500-1000"
+            case .common1000_15000: fileName = "FrequentlyCharacters1000-15000"
+            default: fileName = "FrequentlyCharacters0-500"
+            }
+            let chars = loadFrequentChars(fileName: fileName).shuffled()
             session.charPool = chars
             session.poolIndex = 0
             if !chars.isEmpty { showNextChar() }

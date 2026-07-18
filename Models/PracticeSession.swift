@@ -8,7 +8,9 @@ enum PracticeMode: String, CaseIterable, Identifiable {
     case zone3 = "撇区字"
     case zone4 = "捺区字"
     case zone5 = "折区字"
-    case common = "高频字"
+    case common0_500 = "常用前 500 字"
+    case common500_1000 = "常用中 500 字"
+    case common1000_15000 = "常用后 500 字"
     case mistakes = "错字复习"
     case phrase = "词组练习"
     case article = "文章练习"
@@ -19,7 +21,7 @@ enum PracticeMode: String, CaseIterable, Identifiable {
         switch self {
         case .random: return "shuffle"
         case .zone1, .zone2, .zone3, .zone4, .zone5: return "square.grid.3x3"
-        case .common: return "star"
+        case .common0_500, .common500_1000, .common1000_15000: return "star"
         case .mistakes: return "exclamationmark.triangle"
         case .phrase: return "text.word.spacing"
         case .article: return "book"
@@ -29,7 +31,7 @@ enum PracticeMode: String, CaseIterable, Identifiable {
     /// 是否为单字模式
     var isSingleChar: Bool {
         switch self {
-        case .random, .zone1, .zone2, .zone3, .zone4, .zone5, .common, .mistakes:
+        case .random, .zone1, .zone2, .zone3, .zone4, .zone5, .common0_500, .common500_1000, .common1000_15000, .mistakes:
             return true
         case .phrase, .article:
             return false
