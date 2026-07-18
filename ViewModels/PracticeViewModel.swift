@@ -188,7 +188,7 @@ extension PracticeViewModel {
             if !mistakeChars.isEmpty { showNextChar() }
 
         case .phrase:
-            session.phrasePool = PhraseData.all.shuffled()
+            session.phrasePool = loadPhrases()
             session.phraseIndex = 0
             if !session.phrasePool.isEmpty { showNextPhrase() }
 
@@ -243,6 +243,32 @@ extension PracticeViewModel {
         session.isCompleted = false
     }
 
+    fileprivate func loadPhrases() -> [String] {
+        guard let url = Bundle.main.url(forResource: "wubi_words", withExtension: "txt"),
+              let content = try? String(contentsOf: url, encoding: .utf8)
+        else { return [] }
+        return content
+            .components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.count >= 2 }
+            .shuffled()
+    }
+
+    fileprivate func computePhraseCode(for text: String) -> String {
+        let chars = Array(text)
+        guard !chars.isEmpty else { return "" }
+        let codes = chars.map { wubiDict.code(for: $0) ?? "" }
+
+        switch chars.count {
+        case 2:
+            return (codes[0].prefix(2) + codes[1].prefix(2)).uppercased()
+        case 3:
+            return (codes[0].prefix(1) + codes[1].prefix(1) + codes[2].prefix(2)).uppercased()
+        default:
+            return (codes[0].prefix(1) + codes[1].prefix(1) + codes[2].prefix(1) + codes.last!.prefix(1)).uppercased()
+        }
+    }
+
     fileprivate func showNextPhrase() {
         guard !session.phrasePool.isEmpty else { return }
         if session.phraseIndex >= session.phrasePool.count {
@@ -252,12 +278,12 @@ extension PracticeViewModel {
 
         let phrase = session.phrasePool[session.phraseIndex]
         session.phraseIndex += 1
-        currentDisplayChar = phrase.text
-        currentCharCode = phrase.code
-        currentDecomposition = buildPhraseDecomposition(phrase: phrase)
+        currentDisplayChar = phrase
+        currentCharCode = computePhraseCode(for: phrase)
+        currentDecomposition = buildPhraseDecomposition(for: phrase)
         currentPinyin = nil
         currentCharset = nil
-        session.targetText = phrase.text
+        session.targetText = phrase
         targetTextChars = Array(session.targetText)
 
         inputText = ""
@@ -269,8 +295,8 @@ extension PracticeViewModel {
         session.isCompleted = false
     }
 
-    fileprivate func buildPhraseDecomposition(phrase: PhraseEntry) -> String {
-        let chars = Array(phrase.text)
+    fileprivate func buildPhraseDecomposition(for text: String) -> String {
+        let chars = Array(text)
         guard !chars.isEmpty else { return "" }
 
         var radicalsPerChar: [[String]] = []
@@ -285,21 +311,15 @@ extension PracticeViewModel {
         }
 
         var result: [String] = []
-        switch phrase.type {
+        switch chars.count {
         case 2:
             for i in 0..<min(2, radicalsPerChar.count) {
                 result.append(contentsOf: radicalsPerChar[i].prefix(2))
             }
         case 3:
-            if radicalsPerChar.count >= 1 {
-                result.append(contentsOf: radicalsPerChar[0].prefix(1))
-            }
-            if radicalsPerChar.count >= 2 {
-                result.append(contentsOf: radicalsPerChar[1].prefix(1))
-            }
-            if radicalsPerChar.count >= 3 {
-                result.append(contentsOf: radicalsPerChar[2].prefix(2))
-            }
+            if radicalsPerChar.count >= 1 { result.append(contentsOf: radicalsPerChar[0].prefix(1)) }
+            if radicalsPerChar.count >= 2 { result.append(contentsOf: radicalsPerChar[1].prefix(1)) }
+            if radicalsPerChar.count >= 3 { result.append(contentsOf: radicalsPerChar[2].prefix(2)) }
         default:
             for i in 0..<min(3, radicalsPerChar.count) {
                 result.append(contentsOf: radicalsPerChar[i].prefix(1))

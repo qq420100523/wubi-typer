@@ -53,7 +53,7 @@ struct PracticeSession {
 
     // MARK: - 词组模式状态
     /// 词组池
-    var phrasePool: [PhraseEntry] = []
+    var phrasePool: [String] = []
     /// 当前词组索引
     var phraseIndex: Int = 0
 
