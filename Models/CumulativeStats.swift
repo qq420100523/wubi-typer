@@ -1,19 +1,21 @@
 import Foundation
 import Observation
 
-/// 累计统计 — 跨会话持久化
+/// 累积统计数据（可持久化）
 struct CumulativeStatsData: Codable {
-    var totalChars: Int       // 累计练习字数
-    var correctChars: Int     // 累计正确字数
-    var totalTime: TimeInterval  // 累计用时（秒）
+    var totalChars: Int
+    var correctChars: Int
+    var totalTime: TimeInterval
 }
 
-/// 累计统计管理器
+/// 累积统计管理器
+/// 跨练习会话累积总字数、正确字数、总用时，自动持久化到本地文件
 @MainActor
 @Observable
 final class CumulativeStats {
     private static let fileName = "wubi-cumulative-stats.json"
 
+    /// 当前累积数据，变更时自动保存
     private(set) var data: CumulativeStatsData {
         didSet { save() }
     }
@@ -21,7 +23,7 @@ final class CumulativeStats {
     static let shared = CumulativeStats()
 
     private init() {
-        guard let loaded = Self.loadFromFile() else {
+        guard let loaded: CumulativeStatsData = StorageService.load(CumulativeStatsData.self, from: Self.fileName) else {
             data = CumulativeStatsData(totalChars: 0, correctChars: 0, totalTime: 0)
             return
         }
@@ -29,6 +31,10 @@ final class CumulativeStats {
     }
 
     /// 记录一次练习结果
+    /// - Parameters:
+    ///   - totalChars: 本次练习总字符数
+    ///   - correctChars: 本次练习正确字符数
+    ///   - time: 本次练习耗时（秒）
     func record(totalChars: Int, correctChars: Int, time: TimeInterval) {
         var d = data
         d.totalChars += totalChars
@@ -37,19 +43,19 @@ final class CumulativeStats {
         data = d
     }
 
-    /// 总正确率
+    /// 总准确率
     var accuracy: Double {
         guard data.totalChars > 0 else { return 1.0 }
         return Double(data.correctChars) / Double(data.totalChars)
     }
 
-    /// 平均速度（字/分）
+    /// 平均速度（字/分钟）
     var averageSpeed: Double {
         guard data.totalTime > 0 else { return 0 }
         return (Double(data.correctChars) / data.totalTime) * 60
     }
 
-    /// 格式化累计用时
+    /// 格式化总用时
     var formattedTime: String {
         let minutes = Int(data.totalTime) / 60
         let seconds = Int(data.totalTime) % 60
@@ -59,32 +65,12 @@ final class CumulativeStats {
         return "\(seconds)秒"
     }
 
-    /// 重置累计统计
+    /// 重置统计数据
     func reset() {
         data = CumulativeStatsData(totalChars: 0, correctChars: 0, totalTime: 0)
     }
 
-    // MARK: - 文件持久化
-
-    private var persistenceURL: URL {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        let dir = paths[0].appendingPathComponent("WubiTypingTrainer")
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-        return dir.appendingPathComponent(Self.fileName)
-    }
-
     private func save() {
-        guard let encoded = try? JSONEncoder().encode(data) else { return }
-        try? encoded.write(to: persistenceURL, options: .atomic)
-    }
-
-    private static func loadFromFile() -> CumulativeStatsData? {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        let dir = paths[0].appendingPathComponent("WubiTypingTrainer")
-        let url = dir.appendingPathComponent(fileName)
-        guard let data = try? Data(contentsOf: url),
-              let decoded = try? JSONDecoder().decode(CumulativeStatsData.self, from: data)
-        else { return nil }
-        return decoded
+        StorageService.save(data, to: Self.fileName)
     }
 }

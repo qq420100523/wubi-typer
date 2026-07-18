@@ -1,22 +1,16 @@
 import SwiftUI
 
-/// 文章选择视图
+/// 文章选择列表视图
+/// 支持选择内置文章、导入自定义文章，以及按需从外部来源获取文章
 @MainActor
 struct ArticleListView: View {
     @Bindable var viewModel: PracticeViewModel
     @Environment(\.dismiss) private var dismiss
 
-    @State private var customArticles: [ArticleEntry] = []
+    @State private var articleListVM = ArticleListViewModel()
     @State private var showImportSheet = false
     @State private var importTitle = ""
     @State private var importText = ""
-
-    // 知乎日报相关
-    @State private var zhihuArticles: [ZhihuArticle] = []
-    @State private var isRefreshingZhihu = false
-    @State private var zhihuError: String?
-
-    private let storageKey = "wubi-custom-articles"
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -34,7 +28,7 @@ struct ArticleListView: View {
 
             Divider()
 
-            if allArticles.isEmpty && zhihuArticles.isEmpty {
+            if articleListVM.allArticles.isEmpty, articleListVM.zhihuArticles.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "text.alignleft")
                         .font(.largeTitle)
@@ -45,58 +39,15 @@ struct ArticleListView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
-                    // MARK: - 内置 & 自定义文章
-
                     Section("内置文章") {
-                        ForEach(allArticles) { article in
+                        ForEach(articleListVM.allArticles) { article in
                             articleRow(article)
                         }
                     }
 
-                    // MARK: - 知乎日报文章
-
-                    Section {
-                        if isRefreshingZhihu {
-                            HStack {
-                                Spacer()
-                                ProgressView("正在获取知乎日报…")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                            .padding(.vertical, 8)
-                        } else if let error = zhihuError {
-                            HStack {
-                                Spacer()
-                                VStack(spacing: 4) {
-                                    Image(systemName: "exclamationmark.triangle")
-                                        .foregroundColor(.orange)
-                                    Text(error)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Button("重试", action: refreshZhihu)
-                                        .font(.caption)
-                                }
-                                Spacer()
-                            }
-                            .padding(.vertical, 8)
-                        } else if zhihuArticles.isEmpty {
-                            HStack {
-                                Spacer()
-                                VStack(spacing: 4) {
-                                    Image(systemName: "newspaper")
-                                        .foregroundColor(.secondary)
-                                    Text("暂无知乎日报文章，点击刷新获取")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Button("刷新", action: refreshZhihu)
-                                        .font(.caption)
-                                }
-                                Spacer()
-                            }
-                            .padding(.vertical, 8)
-                        } else {
-                            ForEach(zhihuArticles) { article in
+                    if !articleListVM.zhihuArticles.isEmpty {
+                        Section("知乎日报") {
+                            ForEach(articleListVM.zhihuArticles) { article in
                                 Button(action: {
                                     viewModel.startArticle(article.asArticleEntry)
                                     dismiss()
@@ -120,6 +71,14 @@ struct ArticleListView: View {
                                             Text(article.updatedAt, style: .date)
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
+                                            Button(action: { articleListVM.saveZhihuArticle(article) }) {
+                                                Image(systemName: "square.and.arrow.down")
+                                                    .font(.caption)
+                                                    .foregroundColor(.accentColor)
+                                                    .offset(y: -2)
+                                            }
+                                            .buttonStyle(.plain)
+                                            .help("保存到自定义文章")
                                         }
                                     }
                                 }
@@ -127,25 +86,14 @@ struct ArticleListView: View {
                                 .padding(.vertical, 2)
                             }
                         }
-                    } header: {
-                        HStack {
-                            Text("知乎日报")
-                            if !isRefreshingZhihu {
-                                Button(action: refreshZhihu) {
-                                    Image(systemName: "arrow.clockwise")
-                                        .font(.caption)
-                                }
-                                .buttonStyle(.plain)
-                                .help("刷新知乎日报")
-                            }
-                            Spacer()
-                        }
                     }
-
-
                 }
                 .listStyle(.sidebar)
             }
+
+            Divider()
+
+            externalSources
         }
         .padding()
         .frame(width: 440, height: 480)
@@ -153,12 +101,62 @@ struct ArticleListView: View {
             importSheet
         }
         .onAppear {
-            loadCustomArticles()
-            loadZhihu()
+            articleListVM.loadCustomArticles()
         }
     }
 
-    // MARK: - 文章行（内置 & 自定义）
+    /// 外部文章来源按钮区（可在此追加新来源）
+    private var externalSources: some View {
+        VStack(spacing: 8) {
+            Button(action: { articleListVM.fetchZhihu() }) {
+                HStack {
+                    Image(systemName: "newspaper")
+                        .foregroundColor(.green)
+                    Text("从知乎日报获取")
+                        .foregroundColor(.primary)
+                    Spacer()
+                    if articleListVM.isRefreshingZhihu {
+                        ProgressView()
+                            .controlSize(.small)
+                    } else {
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .padding(10)
+                .background(Color(nsColor: .controlBackgroundColor))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+            .buttonStyle(.plain)
+            .disabled(articleListVM.isRefreshingZhihu)
+
+            if let msg = articleListVM.zhihuSuccessMessage {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundColor(.green)
+                }
+                .transition(.opacity)
+            } else if let error = articleListVM.zhihuError {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .foregroundColor(.orange)
+                        .font(.caption)
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Button("重试") { articleListVM.fetchZhihu() }
+                        .font(.caption)
+                }
+            }
+        }
+    }
+
+    // MARK: - 文章行
 
     private func articleRow(_ article: ArticleEntry) -> some View {
         Button(action: {
@@ -170,7 +168,7 @@ struct ArticleListView: View {
                     Text(article.title)
                         .font(.body)
                         .foregroundColor(.primary)
-                    if isCustom(article) {
+                    if articleListVM.isCustom(article) {
                         Text("自定义")
                             .font(.caption2)
                             .padding(.horizontal, 6)
@@ -180,9 +178,9 @@ struct ArticleListView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
                     Spacer()
-                    if isCustom(article) {
+                    if articleListVM.isCustom(article) {
                         Button(role: .destructive) {
-                            deleteCustom(article)
+                            articleListVM.deleteCustom(article)
                         } label: {
                             Image(systemName: "trash")
                                 .font(.caption)
@@ -199,48 +197,15 @@ struct ArticleListView: View {
         .buttonStyle(.plain)
         .padding(.vertical, 4)
         .contextMenu {
-            if isCustom(article) {
+            if articleListVM.isCustom(article) {
                 Button("删除", role: .destructive) {
-                    deleteCustom(article)
+                    articleListVM.deleteCustom(article)
                 }
             }
         }
     }
 
-    private var allArticles: [ArticleEntry] {
-        ArticleData.all + customArticles
-    }
-
-    // MARK: - 知乎日报
-
-    private func loadZhihu() {
-        zhihuArticles = ZhihuDailyService.loadCachedArticles()
-        if zhihuArticles.isEmpty {
-            refreshZhihu()
-        }
-    }
-
-    private func refreshZhihu() {
-        isRefreshingZhihu = true
-        zhihuError = nil
-
-        Task {
-            let articles = await ZhihuDailyService.shared.fetchLatest()
-            await MainActor.run {
-                zhihuArticles = articles
-                isRefreshingZhihu = false
-                if articles.isEmpty {
-                    zhihuError = "获取知乎日报失败，请检查网络连接后重试"
-                }
-            }
-        }
-    }
-
-    private func isCustom(_ article: ArticleEntry) -> Bool {
-        article.id.hasPrefix("custom_")
-    }
-
-    // MARK: - 导入表单
+    // MARK: - 导入 sheet
 
     private var importSheet: some View {
         VStack(spacing: 16) {
@@ -270,7 +235,11 @@ struct ArticleListView: View {
                 .keyboardShortcut(.escape)
 
                 Button("导入") {
-                    importCustomArticle()
+                    if let _ = articleListVM.importCustomArticle(title: importTitle, text: importText) {
+                        importTitle = ""
+                        importText = ""
+                        showImportSheet = false
+                    }
                 }
                 .keyboardShortcut(.return)
                 .disabled(importTitle.trimmingCharacters(in: .whitespaces).isEmpty ||
@@ -279,39 +248,6 @@ struct ArticleListView: View {
         }
         .padding()
         .frame(width: 400, height: 350)
-    }
-
-    // MARK: - 持久化
-
-    private func loadCustomArticles() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey),
-              let articles = try? JSONDecoder().decode([ArticleEntry].self, from: data)
-        else { return }
-        customArticles = articles
-    }
-
-    private func saveCustomArticles() {
-        guard let data = try? JSONEncoder().encode(customArticles) else { return }
-        UserDefaults.standard.set(data, forKey: storageKey)
-    }
-
-    private func importCustomArticle() {
-        let title = importTitle.trimmingCharacters(in: .whitespaces)
-        let text = importText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !title.isEmpty, text.count >= 2 else { return }
-
-        let article = ArticleEntry(id: "custom_\(Date().timeIntervalSince1970)", title: title, text: text)
-        customArticles.append(article)
-        saveCustomArticles()
-
-        importTitle = ""
-        importText = ""
-        showImportSheet = false
-    }
-
-    private func deleteCustom(_ article: ArticleEntry) {
-        customArticles.removeAll { $0.id == article.id }
-        saveCustomArticles()
     }
 }
 

@@ -1,11 +1,12 @@
 import SwiftUI
 
-/// 简码参考视图 — 一/二级简码表
-struct JianmaView: View {
+/// 简码一览视图
+/// 展示一级简码（25 个高频字）和二级简码（部分常见字），方便用户查阅记忆
+struct ShortCodeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // 一级简码
+                // 一级简码区
                 VStack(alignment: .leading, spacing: 8) {
                     Text("一级简码")
                         .font(.title2)
@@ -26,7 +27,7 @@ struct JianmaView: View {
 
                 Divider()
 
-                // 二级简码
+                // 二级简码区
                 VStack(alignment: .leading, spacing: 8) {
                     Text("二级简码（常见字）")
                         .font(.title2)
@@ -62,38 +63,28 @@ struct JianmaView: View {
         }
     }
 
+    /// 一级简码卡片视图
     private func jianmaCard(key: String, char: String, zone: Int) -> some View {
         VStack(spacing: 4) {
             Text(char)
                 .font(.system(size: 24, weight: .bold))
             Text(key)
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
-                .foregroundColor(zoneColor(zone))
+                .foregroundColor(Color.wubiZone(zone))
         }
         .frame(width: 80, height: 70)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(zoneColor(zone).opacity(0.08))
+                .fill(Color.wubiZone(zone).opacity(0.08))
                 .overlay(
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(zoneColor(zone).opacity(0.3), lineWidth: 1)
+                        .stroke(Color.wubiZone(zone).opacity(0.3), lineWidth: 1)
                 )
         )
-    }
-
-    private func zoneColor(_ zone: Int) -> Color {
-        let colors: [Int: Color] = [
-            1: .red,
-            2: .teal,
-            3: .blue,
-            4: .green,
-            5: .yellow,
-        ]
-        return colors[zone] ?? .gray
     }
 }
 
 #Preview {
-    JianmaView()
+    ShortCodeView()
         .frame(width: 500, height: 600)
 }

@@ -1,16 +1,16 @@
 import SwiftUI
 
-/// 五笔86输入规则参考
-struct RulesView: View {
+/// 五笔86输入规则说明视图
+/// 涵盖单字全码、末笔识别码、简码、词组输入、键名字等规则
+struct WubiRulesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // 标题
                 Text("五笔86输入规则")
                     .font(.title2)
                     .bold()
 
-                // 1. 单字全码
+                // 规则段落
                 ruleSection(title: "一、单字全码") {
                     Text("按书写顺序取字根编码，最多取 **4 码**。")
 
@@ -34,13 +34,10 @@ struct RulesView: View {
                     }
                 }
 
-                // 2. 末笔识别码
                 ruleSection(title: "二、末笔识别码") {
                     Text("当字根不足4码时，用最后一笔的笔画类型 × 字型结构来确定识别码。")
 
-                    // 识别码表
                     VStack(spacing: 0) {
-                        // 表头
                         HStack {
                             Text("").frame(width: 60)
                             Text("左右型").frame(maxWidth: .infinity)
@@ -53,7 +50,7 @@ struct RulesView: View {
 
                         Divider()
 
-                        ForEach(识别码行, id: \.0) { row in
+                        ForEach(recognitionCodeRows, id: \.0) { row in
                             HStack {
                                 Text(row.0).bold().frame(width: 60)
                                 Text(row.1).frame(maxWidth: .infinity)
@@ -78,7 +75,6 @@ struct RulesView: View {
                         .padding(.top, 4)
                 }
 
-                // 3. 简码
                 ruleSection(title: "三、简码输入") {
                     ruleCase(label: "一级简码") {
                         Text("按 1 个字母 + 空格。如 ")
@@ -95,7 +91,6 @@ struct RulesView: View {
                     }
                 }
 
-                // 4. 词组
                 ruleSection(title: "四、词组输入") {
                     ruleCase(label: "两字词") {
                         Text("每字各取前两码。如 ")
@@ -117,7 +112,6 @@ struct RulesView: View {
                     }
                 }
 
-                // 5. 键名字
                 ruleSection(title: "五、键名字") {
                     Text("每个键的键名字连按4次即可输入。如 ")
                     + codeText("王 → GGGG")
@@ -131,8 +125,7 @@ struct RulesView: View {
         }
     }
 
-    // MARK: - 辅助视图组件
-
+    /// 规则分区标题
     @ViewBuilder
     private func ruleSection(title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -145,6 +138,7 @@ struct RulesView: View {
         }
     }
 
+    /// 规则示例条目（左侧标签 + 右侧内容）
     @ViewBuilder
     private func ruleCase(label: String, @ViewBuilder content: () -> some View) -> some View {
         HStack(alignment: .top, spacing: 8) {
@@ -163,14 +157,15 @@ struct RulesView: View {
         .padding(.leading, 8)
     }
 
+    /// 将文本渲染为等宽蓝色代码样式
     private func codeText(_ text: String) -> Text {
         Text(text)
             .font(.system(.callout, design: .monospaced))
             .foregroundColor(.blue)
     }
 
-    /// 识别码表数据
-    private let 识别码行: [(String, String, String, String)] = [
+    /// 末笔识别码表：笔画 × 字型
+    private let recognitionCodeRows: [(String, String, String, String)] = [
         ("横 (1)", "G", "F", "D"),
         ("竖 (2)", "H", "J", "K"),
         ("撇 (3)", "T", "R", "E"),
@@ -180,6 +175,6 @@ struct RulesView: View {
 }
 
 #Preview {
-    RulesView()
+    WubiRulesView()
         .frame(width: 500, height: 700)
 }

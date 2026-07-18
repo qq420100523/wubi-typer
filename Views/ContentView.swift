@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var showArticlePicker = false
     @Environment(\.scenePhase) private var scenePhase
 
+    /// 侧边栏导航项
     enum SidebarItem: String, CaseIterable, Identifiable {
         case practice = "练习"
         case mistakes = "错字本"
@@ -114,10 +115,10 @@ struct ContentView: View {
             WubiRootKeyboardView()
 
         case .jianma:
-            JianmaView()
+            ShortCodeView()
 
         case .rules:
-            RulesView()
+            WubiRulesView()
 
         case .settings:
             SettingsView(viewModel: viewModel)

@@ -3,9 +3,9 @@ import SwiftUI
 
 private let correctTransitionDelay: TimeInterval = 0.6
 private let wrongTransitionDelay: TimeInterval = 1.2
-private let timerInterval: TimeInterval = 1.0
-private let elapsedUpdateThreshold: TimeInterval = 0.4
 
+/// 练习主视图模型
+/// 管理所有练习模式的业务逻辑：单字、词组、文章，包括输入处理、计时、反馈等
 @Observable
 @MainActor
 final class PracticeViewModel {
@@ -29,7 +29,7 @@ final class PracticeViewModel {
     fileprivate var isTransitioning = false
 
     // MARK: - 私有状态
-    fileprivate var timer: Timer?
+    fileprivate let timerService = TimerService()
     fileprivate var elapsed: TimeInterval = 0
     var targetTextChars: [Character] = []
     var typedTextChars: [Character] = []
@@ -103,6 +103,9 @@ final class PracticeViewModel {
 
     init() {
         self.session = PracticeSession()
+        timerService.onUpdate = { [weak self] elapsed in
+            self?.elapsed = elapsed
+        }
         let loadResult = wubiDict.loadBuiltin()
         if !loadResult {
             userAlertMessage = "词库加载失败，部分功能不可用"
@@ -114,16 +117,6 @@ final class PracticeViewModel {
 // MARK: - 模式管理
 
 extension PracticeViewModel {
-    fileprivate func loadFrequentChars(fileName: String) -> [String] {
-        guard let url = Bundle.main.url(forResource: fileName, withExtension: "txt"),
-              let content = try? String(contentsOf: url, encoding: .utf8)
-        else { return [] }
-        return content
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { $0.count == 1 && !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-    }
-
     fileprivate func filteredChars() -> [String] {
         if limitToGB2312 {
             return wubiDict.allChars.filter { ch in
@@ -172,7 +165,7 @@ extension PracticeViewModel {
             case .common1000_15000: fileName = "FrequentlyCharacters1000-15000"
             default: fileName = "FrequentlyCharacters0-500"
             }
-            let chars = loadFrequentChars(fileName: fileName).shuffled()
+            let chars = ContentLoader.loadFrequentChars(fileName: fileName).shuffled()
             session.charPool = chars
             session.poolIndex = 0
             if !chars.isEmpty { showNextChar() }
@@ -190,7 +183,7 @@ extension PracticeViewModel {
             if !mistakeChars.isEmpty { showNextChar() }
 
         case .phrase:
-            session.phrasePool = loadPhrases()
+            session.phrasePool = ContentLoader.loadPhrases()
             session.phraseIndex = 0
             if !session.phrasePool.isEmpty { showNextPhrase() }
 
@@ -245,32 +238,6 @@ extension PracticeViewModel {
         session.isCompleted = false
     }
 
-    fileprivate func loadPhrases() -> [String] {
-        guard let url = Bundle.main.url(forResource: "wubi_words", withExtension: "txt"),
-              let content = try? String(contentsOf: url, encoding: .utf8)
-        else { return [] }
-        return content
-            .components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { $0.count >= 2 }
-            .shuffled()
-    }
-
-    fileprivate func computePhraseCode(for text: String) -> String {
-        let chars = Array(text)
-        guard !chars.isEmpty else { return "" }
-        let codes = chars.map { wubiDict.code(for: $0) ?? "" }
-
-        switch chars.count {
-        case 2:
-            return (codes[0].prefix(2) + codes[1].prefix(2)).uppercased()
-        case 3:
-            return (codes[0].prefix(1) + codes[1].prefix(1) + codes[2].prefix(2)).uppercased()
-        default:
-            return (codes[0].prefix(1) + codes[1].prefix(1) + codes[2].prefix(1) + codes.last!.prefix(1)).uppercased()
-        }
-    }
-
     fileprivate func showNextPhrase() {
         guard !session.phrasePool.isEmpty else { return }
         if session.phraseIndex >= session.phrasePool.count {
@@ -281,8 +248,8 @@ extension PracticeViewModel {
         let phrase = session.phrasePool[session.phraseIndex]
         session.phraseIndex += 1
         currentDisplayChar = phrase
-        currentCharCode = computePhraseCode(for: phrase)
-        currentDecomposition = buildPhraseDecomposition(for: phrase)
+        currentCharCode = wubiDict.computePhraseCode(for: phrase)
+        currentDecomposition = wubiDict.computePhraseDecomposition(for: phrase)
         currentPinyin = nil
         currentCharset = nil
         session.targetText = phrase
@@ -297,42 +264,6 @@ extension PracticeViewModel {
         session.isCompleted = false
     }
 
-    fileprivate func buildPhraseDecomposition(for text: String) -> String {
-        let chars = Array(text)
-        guard !chars.isEmpty else { return "" }
-
-        var radicalsPerChar: [[String]] = []
-        for ch in chars {
-            if let detail = wubiDict.detail(for: ch),
-               let decomp = detail.decomposition {
-                let parts = decomp.split(separator: " ").filter { !$0.isEmpty }
-                radicalsPerChar.append(parts.map(String.init))
-            } else {
-                radicalsPerChar.append([])
-            }
-        }
-
-        var result: [String] = []
-        switch chars.count {
-        case 2:
-            for i in 0..<min(2, radicalsPerChar.count) {
-                result.append(contentsOf: radicalsPerChar[i].prefix(2))
-            }
-        case 3:
-            if radicalsPerChar.count >= 1 { result.append(contentsOf: radicalsPerChar[0].prefix(1)) }
-            if radicalsPerChar.count >= 2 { result.append(contentsOf: radicalsPerChar[1].prefix(1)) }
-            if radicalsPerChar.count >= 3 { result.append(contentsOf: radicalsPerChar[2].prefix(2)) }
-        default:
-            for i in 0..<min(3, radicalsPerChar.count) {
-                result.append(contentsOf: radicalsPerChar[i].prefix(1))
-            }
-            if radicalsPerChar.count >= 4 {
-                result.append(contentsOf: radicalsPerChar[3].prefix(1))
-            }
-        }
-
-        return result.joined(separator: " ")
-    }
 }
 
 // MARK: - 输入处理
@@ -485,23 +416,12 @@ extension PracticeViewModel {
 
 extension PracticeViewModel {
     fileprivate func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            Task { @MainActor in
-                guard !self.session.isCompleted, let start = self.session.startTime else { return }
-                let raw = Date().timeIntervalSince(start)
-                let newElapsed = raw - self.session.pausedDuration
-                if abs(newElapsed - self.elapsed) >= elapsedUpdateThreshold {
-                    self.elapsed = newElapsed
-                }
-            }
-        }
+        guard let start = session.startTime else { return }
+        timerService.start(startTime: start, pausedDuration: session.pausedDuration)
     }
 
     fileprivate func completeSession() {
-        timer?.invalidate()
-        timer = nil
+        timerService.stop()
         session.isPaused = false
         session.isCompleted = true
 
@@ -539,8 +459,7 @@ extension PracticeViewModel {
     }
 
     func reset() {
-        timer?.invalidate()
-        timer = nil
+        timerService.stop()
         let oldMode = session.mode
         let oldTarget = session.targetText
         session = PracticeSession(targetText: oldTarget)
@@ -595,16 +514,14 @@ extension PracticeViewModel {
         } else {
             session.isPaused = true
             session.pauseStartTime = Date()
-            timer?.invalidate()
-            timer = nil
+            timerService.stop()
         }
     }
 
     /// 应用进入后台/被最小化时暂停计时器
     func suspendTimer() {
-        guard !session.isPaused, !session.isCompleted, session.startTime != nil, timer != nil else { return }
-        timer?.invalidate()
-        timer = nil
+        guard !session.isPaused, !session.isCompleted, session.startTime != nil, timerService.isRunning else { return }
+        timerService.stop()
         session.pauseStartTime = Date()
     }
 

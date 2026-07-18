@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// 字根表视图
+/// 以键盘布局展示五笔86全部字根，按分区着色，支持滚动浏览
 struct WubiRootKeyboardView: View {
     private static let keySize: CGFloat = 100
     private static let keySpacing: CGFloat = 6
@@ -16,6 +18,7 @@ struct WubiRootKeyboardView: View {
                         .foregroundColor(.secondary)
                 }
 
+                // 分区图例
                 HStack(spacing: 16) {
                     ForEach(1...5, id: \.self) { zone in
                         HStack(spacing: 4) {
@@ -29,6 +32,7 @@ struct WubiRootKeyboardView: View {
                     }
                 }
 
+                // 键盘分区布局
                 VStack(spacing: Self.keySpacing) {
                     ForEach(KeyboardLayout.rows.indices, id: \.self) { rowIndex in
                         HStack(spacing: Self.keySpacing) {
@@ -51,7 +55,8 @@ struct WubiRootKeyboardView: View {
         }
     }
 
-    private func keyCard(info: KeyInfo) -> some View {
+    /// 单个键位的字根卡片
+    private func keyCard(info: WubiKeyInfo) -> some View {
         VStack(spacing: 2) {
             HStack {
                 Text(info.name)
@@ -94,15 +99,9 @@ struct WubiRootKeyboardView: View {
         )
     }
 
+    /// 获取分区颜色（委托给 Color.wubiZone）
     private func zoneColor(_ zone: Int) -> Color {
-        let colors: [Int: Color] = [
-            1: .red,
-            2: .teal,
-            3: .blue,
-            4: .green,
-            5: .yellow,
-        ]
-        return colors[zone] ?? .gray
+        Color.wubiZone(zone)
     }
 }
 

@@ -2,7 +2,7 @@ import Foundation
 import OSLog
 
 /// 单个字的完整信息
-struct CharDetail {
+struct WubiCharacterDetail {
     let character: Character
     /// 五笔86编码
     let code: String?
@@ -18,7 +18,7 @@ struct CharDetail {
 @MainActor
 final class WubiDictionary {
     private var dict: [Character: String] = [:]
-    private var details: [Character: CharDetail] = [:]
+    private var details: [Character: WubiCharacterDetail] = [:]
     private(set) var isLoaded = false
 
     static let shared = WubiDictionary()
@@ -46,7 +46,7 @@ final class WubiDictionary {
         do {
             let content = try String(contentsOf: url, encoding: .utf8)
             var newDict: [Character: String] = [:]
-            var newDetails: [Character: CharDetail] = [:]
+            var newDetails: [Character: WubiCharacterDetail] = [:]
             for line in content.components(separatedBy: .newlines) {
                 let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !trimmed.isEmpty, !trimmed.hasPrefix("#") else { continue }
@@ -74,7 +74,7 @@ final class WubiDictionary {
                     if let code = codeField, !code.isEmpty {
                         newDict[char] = code
                     }
-                    newDetails[char] = CharDetail(
+                    newDetails[char] = WubiCharacterDetail(
                         character: char,
                         code: codeField,
                         decomposition: decomposition,
@@ -83,7 +83,7 @@ final class WubiDictionary {
                     )
                 } else {
                     newDict[char] = value
-                    newDetails[char] = CharDetail(
+                    newDetails[char] = WubiCharacterDetail(
                         character: char,
                         code: value,
                         decomposition: nil,
@@ -108,8 +108,15 @@ final class WubiDictionary {
         dict[character]
     }
 
+    /// 查询单个字的拆字分解数组
+    func decomposition(for character: Character) -> [String] {
+        guard let detail = detail(for: character),
+              let decomp = detail.decomposition else { return [] }
+        return decomp.split(separator: " ").filter { !$0.isEmpty }.map(String.init)
+    }
+
     /// 查询单个字的完整信息
-    func detail(for character: Character) -> CharDetail? {
+    func detail(for character: Character) -> WubiCharacterDetail? {
         details[character]
     }
 

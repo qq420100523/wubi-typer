@@ -24,7 +24,7 @@
 		AA0CF3B51ED8496AA1A9EE3C /* ZhihuDailyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE5426F2A1E4B84923BC763 /* ZhihuDailyService.swift */; };
 		AA8313C5F694462AB0F3112F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290042A3743E4124AEEB507C /* ContentView.swift */; };
 		AAE7B9439BEC4E788E77EC22 /* TextViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A241C7406EE4898838A2502 /* TextViewer.swift */; };
-		AB55274F41234A649200A3CE /* RulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FB21925BFF47BCB71864E8 /* RulesView.swift */; };
+		AB55274F41234A649200A3CE /* WubiRulesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75FB21925BFF47BCB71864E8 /* WubiRulesView.swift */; };
 		B222C513F33E42D1984ECE34 /* WubiTypingTrainerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F5446DA82684A57837D33BE /* WubiTypingTrainerApp.swift */; };
 		B631D7DD300BC76E00D1AEE8 /* MistakeTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7D9300BC76E00D1AEE4 /* MistakeTrackerTests.swift */; };
 		B631D7DE300BC76E00D1AEE9 /* TypingStatsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B631D7DA300BC76E00D1AEE5 /* TypingStatsTests.swift */; };
@@ -37,9 +37,15 @@
 		BF19BBBB6B3041BAA9293023 /* CumulativeStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38084FA3671B4D43AFE4D797 /* CumulativeStats.swift */; };
 		D490CC3A8E2843CCB16F9872 /* ZhihuModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B18371C2D64B87B19E1482 /* ZhihuModels.swift */; };
 		DBA709F9B5A342CE862AC5E4 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EE737503FE4070B2763896 /* SettingsView.swift */; };
-		E3DA6FACDA8148E2BF53644C /* JianmaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56568FEB1C944DAC862C42EF /* JianmaView.swift */; };
+		E3DA6FACDA8148E2BF53644C /* ShortCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56568FEB1C944DAC862C42EF /* ShortCodeView.swift */; };
 		E7CF11E790834FBD86D6731B /* PracticeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3F5321FF7F48D7B6E667A7 /* PracticeView.swift */; };
 		F391BB6A07674FC6A2543A65 /* WubiDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C870B11DD97F4ACFA9EC5CC7 /* WubiDictionary.swift */; };
+		6A7B8C9D0E1F2A3B4C5D6E7F /* ContentLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B2C3D4E5F6A7B8C9D0E1F /* ContentLoader.swift */; };
+		7A8B9C0D1E2F3A4B5C6D7E8F /* WubiDictionary+PhraseCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3B4C5D6E7F8A9B0C1D2E3F /* WubiDictionary+PhraseCode.swift */; };
+		8A9B0C1D2E3F4A5B6C7D8E9F /* TimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B4C5D6E7F8A9B0C1D2E3F4A /* TimerService.swift */; };
+		9A0B1C2D3E4F5A6B7C8D9E0F /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D6E7F8A9B0C1D2E3F4A5B /* StorageService.swift */; };
+		A0B1C2D3E4F5A6B7C8D9E0F1 /* Color+WubiZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D6E7F8A9B0C1D2E3F4A5B6C /* Color+WubiZone.swift */; };
+		B0C1D2E3F4A5B6C7D8E9F0A1 /* ArticleListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7F8A9B0C1D2E3F4A5B6C7D /* ArticleListViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,9 +67,9 @@
 		3572E019AD704A39A68B9164 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		38084FA3671B4D43AFE4D797 /* CumulativeStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CumulativeStats.swift; path = Models/CumulativeStats.swift; sourceTree = SOURCE_ROOT; };
 		525532FC07B647F7868700DB /* KeyboardLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeyboardLayout.swift; path = Models/KeyboardLayout.swift; sourceTree = SOURCE_ROOT; };
-		56568FEB1C944DAC862C42EF /* JianmaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = JianmaView.swift; path = Views/JianmaView.swift; sourceTree = SOURCE_ROOT; };
+		56568FEB1C944DAC862C42EF /* ShortCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShortCodeView.swift; path = Views/ShortCodeView.swift; sourceTree = SOURCE_ROOT; };
 		5DE8A54C502D45F88C65C41C /* WubiRootKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WubiRootKeyboardView.swift; path = Views/WubiRootKeyboardView.swift; sourceTree = SOURCE_ROOT; };
-		75FB21925BFF47BCB71864E8 /* RulesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RulesView.swift; path = Views/RulesView.swift; sourceTree = SOURCE_ROOT; };
+		75FB21925BFF47BCB71864E8 /* WubiRulesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WubiRulesView.swift; path = Views/WubiRulesView.swift; sourceTree = SOURCE_ROOT; };
 		8DEE6CEEB1644FDEB0F81BE9 /* MistakeTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MistakeTracker.swift; path = Models/MistakeTracker.swift; sourceTree = SOURCE_ROOT; };
 		9F5446DA82684A57837D33BE /* WubiTypingTrainerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WubiTypingTrainerApp.swift; path = App/WubiTypingTrainerApp.swift; sourceTree = SOURCE_ROOT; };
 		9F8C3C9E15734E9C864A62E2 /* WubiTypingTrainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WubiTypingTrainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +95,12 @@
 		EEE5426F2A1E4B84923BC763 /* ZhihuDailyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZhihuDailyService.swift; path = Services/ZhihuDailyService.swift; sourceTree = SOURCE_ROOT; };
 		F5B18371C2D64B87B19E1482 /* ZhihuModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZhihuModels.swift; path = Models/ZhihuModels.swift; sourceTree = SOURCE_ROOT; };
 		FC823472EB7B4A43965279FF /* RadicalFontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RadicalFontManager.swift; path = Services/RadicalFontManager.swift; sourceTree = SOURCE_ROOT; };
+		0A1B2C3D4E5F6A7B8C9D0E1F /* ContentLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentLoader.swift; path = Services/ContentLoader.swift; sourceTree = SOURCE_ROOT; };
+		2A3B4C5D6E7F8A9B0C1D2E3F /* WubiDictionary+PhraseCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WubiDictionary+PhraseCode.swift"; path = "Extensions/WubiDictionary+PhraseCode.swift"; sourceTree = SOURCE_ROOT; };
+		3B4C5D6E7F8A9B0C1D2E3F4A /* TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerService.swift; path = Services/TimerService.swift; sourceTree = SOURCE_ROOT; };
+		4C5D6E7F8A9B0C1D2E3F4A5B /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StorageService.swift; path = Services/StorageService.swift; sourceTree = SOURCE_ROOT; };
+		5D6E7F8A9B0C1D2E3F4A5B6C /* Color+WubiZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "Color+WubiZone.swift"; path = "Services/Color+WubiZone.swift"; sourceTree = SOURCE_ROOT; };
+		6E7F8A9B0C1D2E3F4A5B6C7D /* ArticleListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ArticleListViewModel.swift; path = ViewModels/ArticleListViewModel.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,12 +126,12 @@
 			children = (
 				C3A35932497A48D593C7E788 /* ArticleListView.swift */,
 				290042A3743E4124AEEB507C /* ContentView.swift */,
-				56568FEB1C944DAC862C42EF /* JianmaView.swift */,
+				56568FEB1C944DAC862C42EF /* ShortCodeView.swift */,
 				A3D37038D5024522AAF4BC6C /* MistakeListView.swift */,
 				BA6438CC7AC5431C84B77AE5 /* ModeSelectorView.swift */,
 				AD3F5321FF7F48D7B6E667A7 /* PracticeView.swift */,
 				5DE8A54C502D45F88C65C41C /* WubiRootKeyboardView.swift */,
-				75FB21925BFF47BCB71864E8 /* RulesView.swift */,
+				75FB21925BFF47BCB71864E8 /* WubiRulesView.swift */,
 				1A241C7406EE4898838A2502 /* TextViewer.swift */,
 				13EE737503FE4070B2763896 /* SettingsView.swift */,
 			);
@@ -156,6 +168,10 @@
 			children = (
 				FC823472EB7B4A43965279FF /* RadicalFontManager.swift */,
 				EEE5426F2A1E4B84923BC763 /* ZhihuDailyService.swift */,
+				0A1B2C3D4E5F6A7B8C9D0E1F /* ContentLoader.swift */,
+				3B4C5D6E7F8A9B0C1D2E3F4A /* TimerService.swift */,
+				4C5D6E7F8A9B0C1D2E3F4A5B /* StorageService.swift */,
+				5D6E7F8A9B0C1D2E3F4A5B6C /* Color+WubiZone.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -165,6 +181,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E1F2A3B4C5D6E7F8A9B0C1D2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2A3B4C5D6E7F8A9B0C1D2E3F /* WubiDictionary+PhraseCode.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		9D5E9D722F27425CB889A482 /* App */ = {
@@ -210,6 +234,7 @@
 				ADD06BD90B2A48AA82F55025 /* Resources */,
 				3572E019AD704A39A68B9164 /* Info.plist */,
 				5477250F58A912887FD3A8BC /* Services */,
+				E1F2A3B4C5D6E7F8A9B0C1D2 /* Extensions */,
 			);
 			name = WubiTypingTrainer;
 			sourceTree = "<group>";
@@ -218,6 +243,7 @@
 			isa = PBXGroup;
 			children = (
 				310DEC32BD8248298EEFD2A9 /* PracticeViewModel.swift */,
+				6E7F8A9B0C1D2E3F4A5B6C7D /* ArticleListViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -353,16 +379,22 @@
 				67E7355215594FAD8C0AA905 /* PracticeViewModel.swift in Sources */,
 				4BE147B7BCB142CD85DC0715 /* ArticleListView.swift in Sources */,
 				AA8313C5F694462AB0F3112F /* ContentView.swift in Sources */,
-				E3DA6FACDA8148E2BF53644C /* JianmaView.swift in Sources */,
+				E3DA6FACDA8148E2BF53644C /* ShortCodeView.swift in Sources */,
 				71E4AC673FB84BB0996EAE9A /* MistakeListView.swift in Sources */,
 				6C2EF2A20DBF46B0B2ADCBB8 /* ModeSelectorView.swift in Sources */,
 				E7CF11E790834FBD86D6731B /* PracticeView.swift in Sources */,
 				9F59AC85671D4CFD98BD539D /* WubiRootKeyboardView.swift in Sources */,
-				AB55274F41234A649200A3CE /* RulesView.swift in Sources */,
+				AB55274F41234A649200A3CE /* WubiRulesView.swift in Sources */,
 				AAE7B9439BEC4E788E77EC22 /* TextViewer.swift in Sources */,
 				DBA709F9B5A342CE862AC5E4 /* SettingsView.swift in Sources */,
 				AA0CF3B51ED8496AA1A9EE3C /* ZhihuDailyService.swift in Sources */,
 				D490CC3A8E2843CCB16F9872 /* ZhihuModels.swift in Sources */,
+				6A7B8C9D0E1F2A3B4C5D6E7F /* ContentLoader.swift in Sources */,
+				7A8B9C0D1E2F3A4B5C6D7E8F /* WubiDictionary+PhraseCode.swift in Sources */,
+				8A9B0C1D2E3F4A5B6C7D8E9F /* TimerService.swift in Sources */,
+				9A0B1C2D3E4F5A6B7C8D9E0F /* StorageService.swift in Sources */,
+				A0B1C2D3E4F5A6B7C8D9E0F1 /* Color+WubiZone.swift in Sources */,
+				B0C1D2E3F4A5B6C7D8E9F0A1 /* ArticleListViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

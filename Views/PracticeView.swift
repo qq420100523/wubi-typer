@@ -92,10 +92,27 @@ struct PracticeView: View {
             TextField("输入文字", text: $viewModel.inputText)
                 .textFieldStyle(.roundedBorder)
                 .font(.system(size: 24, design: .monospaced))
-                .frame(width: 200)
+                .frame(width: 250)
                 .multilineTextAlignment(.center)
                 .focused($singleCharFocused)
                 .disabled(viewModel.session.isCompleted || viewModel.session.isPaused)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6)
+                        .stroke(viewModel.session.isPaused ? Color.orange : Color.clear, lineWidth: 1.5)
+                )
+                .overlay(alignment: .topTrailing) {
+                    if viewModel.session.isCompleted {
+                        Label("完成!", systemImage: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.caption)
+                            .offset(x: 0, y: -18)
+                    } else if viewModel.session.isPaused {
+                        Label("已暂停", systemImage: "pause.circle.fill")
+                            .foregroundColor(.orange)
+                            .font(.caption)
+                            .offset(x: 0, y: -18)
+                    }
+                }
 
             HStack(spacing: 16) {
                 Button("跳过") {
@@ -167,7 +184,6 @@ struct PracticeView: View {
                 isPaused: viewModel.session.isPaused,
                 isActive: viewModel.isActive,
                 fontSize: CGFloat(textFontSize),
-                inputFocused: $inputFocused,
                 onTogglePause: { viewModel.togglePause() }
             )
             .padding(.horizontal)
@@ -177,8 +193,7 @@ struct PracticeView: View {
     }
 }
 
-// MARK: - 进度条
-
+/// 进度条组件
 private struct ProgressBarView: View, Equatable {
     let progress: Double
     let isCompleted: Bool
@@ -200,8 +215,8 @@ private struct ProgressBarView: View, Equatable {
     }
 }
 
-// MARK: - 对照文本
-
+/// 对照文本显示组件
+/// 使用 TextViewer 渲染，正确字符标绿、错误字符标红 + 背景高亮
 private struct ReferenceTextView: View, Equatable {
     let targetChars: [Character]
     let typedChars: [Character]
@@ -243,6 +258,7 @@ private struct ReferenceTextView: View, Equatable {
                 let nsAttr = buildAttrString(targetChars: targetChars, typedChars: typedChars)
                 TextViewer(
                     attributedText: nsAttr,
+                    text: .constant(""),
                     cursorPosition: cursorPos,
                     textVersion: cursorPos,
                     appearanceVersion: appearanceVersion,
@@ -364,11 +380,9 @@ private struct InputArea: View, Equatable {
     let isPaused: Bool
     let isActive: Bool
     let fontSize: CGFloat
-    @FocusState.Binding var inputFocused: Bool
     let onTogglePause: () -> Void
 
     static func == (lhs: InputArea, rhs: InputArea) -> Bool {
-        lhs.text == rhs.text &&
         lhs.isCompleted == rhs.isCompleted &&
         lhs.isPaused == rhs.isPaused &&
         lhs.isActive == rhs.isActive &&
@@ -399,23 +413,31 @@ private struct InputArea: View, Equatable {
                 }
             }
 
-            TextEditor(text: $text)
-                .font(.system(size: fontSize, design: .monospaced))
-                .frame(minHeight: 60, maxHeight: 120)
-                .scrollContentBackground(.hidden)
-                .background(Color(nsColor: .textBackgroundColor))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(borderColor, lineWidth: 1.5)
-                )
-                .focused($inputFocused)
-                .disabled(isCompleted)
-                .onChange(of: inputFocused) { _, newVal in
-                    if newVal, isPaused, isActive {
+            TextViewer(
+                attributedText: NSAttributedString(string: text, attributes: [
+                    .font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular),
+                    .foregroundColor: NSColor.labelColor,
+                ]),
+                text: $text,
+                cursorPosition: 0,
+                textVersion: 0,
+                appearanceVersion: 0,
+                fontSize: fontSize,
+                isEditable: true,
+                onFocusChange: { focused in
+                    if focused, isPaused, isActive {
                         onTogglePause()
                     }
                 }
+            )
+            .frame(minHeight: 60, maxHeight: 120)
+            .background(Color(nsColor: .textBackgroundColor))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(borderColor, lineWidth: 1.5)
+            )
+            .opacity(isCompleted ? 0.6 : 1)
         }
     }
 }
