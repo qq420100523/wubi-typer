@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// 练习主视图 — 根据模式切换单字视图或文章视图
 @MainActor
@@ -15,6 +16,7 @@ struct PracticeView: View {
     @State private var textFontSize: Double = UserDefaults.standard.double(forKey: "textFontSize") != 0
         ? UserDefaults.standard.double(forKey: "textFontSize")
         : 28
+    @State private var eventMonitor: Any?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,6 +29,49 @@ struct PracticeView: View {
         .background(Color(nsColor: .windowBackgroundColor))
         .onChange(of: textFontSize) { _, newValue in
             UserDefaults.standard.set(newValue, forKey: "textFontSize")
+        }
+        .onAppear {
+            installClickAwayMonitor()
+        }
+        .onDisappear {
+            removeClickAwayMonitor()
+        }
+        .onChange(of: viewModel.session.isPaused) { _, isPaused in
+            guard isPaused else { return }
+            if viewModel.isSingleCharActive {
+                singleCharFocused = false
+            } else {
+                NSApp.keyWindow?.makeFirstResponder(nil)
+            }
+        }
+    }
+
+    private func installClickAwayMonitor() {
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .leftMouseDown) {
+            [weak viewModel] event in
+            guard let viewModel,
+                  viewModel.isActive,
+                  !viewModel.session.isPaused,
+                  !viewModel.session.isCompleted,
+                  let window = event.window,
+                  let hitView = window.contentView?.hitTest(event.locationInWindow)
+            else { return event }
+
+            // 如果点击的 view 能接受 first responder（例如 NSButton、其他 NSTextView），
+            // 让 resignFirstResponder 机制处理暂停
+            if hitView.acceptsFirstResponder { return event }
+
+            // 点击在不会触发 resignFirstResponder 的区域（标签、背景、Spacer 等）
+            // 且当前输入框仍持有焦点 → 手动暂停
+            viewModel.togglePause()
+            return event
+        }
+    }
+
+    private func removeClickAwayMonitor() {
+        if let monitor = eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            eventMonitor = nil
         }
     }
 
@@ -101,7 +146,7 @@ struct PracticeView: View {
                 .frame(width: 250)
                 .multilineTextAlignment(.center)
                 .focused($singleCharFocused)
-                .disabled(viewModel.session.isCompleted || viewModel.session.isPaused)
+                .disabled(viewModel.session.isCompleted)
                 .overlay(
                     RoundedRectangle(cornerRadius: 6)
                         .stroke(viewModel.session.isPaused ? Color.orange : Color.clear, lineWidth: 1.5)
