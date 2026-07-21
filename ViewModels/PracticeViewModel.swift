@@ -29,6 +29,8 @@ final class PracticeViewModel {
     var feedbackText: String = ""
     var feedbackType: FeedbackType = .none
     fileprivate var isTransitioning = false
+    /// 标记当前暂停是否由系统触发（窗口切换/后台），区别于用户手动暂停
+    fileprivate var systemSuspend = false
 
     // MARK: - 私有状态
     fileprivate let timerService = TimerService()
@@ -637,16 +639,20 @@ extension PracticeViewModel {
         }
     }
 
-    /// 应用进入后台/被最小化时暂停计时器
+    /// 应用进入后台/被最小化/切窗口时暂停（同步设置 isPaused）
     func suspendTimer() {
         guard !session.isPaused, !session.isCompleted, session.startTime != nil, timerService.isRunning else { return }
         timerService.stop()
+        session.isPaused = true
         session.pauseStartTime = Date()
+        systemSuspend = true
     }
 
-    /// 应用回到前台时恢复计时器
+    /// 应用回到前台时恢复计时器（仅恢复由 suspendTimer 触发的暂停，不影响手动暂停）
     func resumeTimer() {
-        guard !session.isPaused, !session.isCompleted, let pauseStart = session.pauseStartTime else { return }
+        guard systemSuspend, !session.isCompleted, let pauseStart = session.pauseStartTime else { return }
+        systemSuspend = false
+        session.isPaused = false
         session.pausedDuration += Date().timeIntervalSince(pauseStart)
         session.pauseStartTime = nil
         if session.startTime != nil {

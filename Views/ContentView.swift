@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// 主视图 — 侧边栏导航
 @MainActor
@@ -61,6 +62,12 @@ struct ContentView: View {
             case .inactive, .background: viewModel.suspendTimer()
             @unknown default: break
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.willResignActiveNotification)) { _ in
+            viewModel.suspendTimer()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            viewModel.resumeTimer()
         }
         .onChange(of: selectedSidebar) { _, newValue in
             if newValue != .practice {
