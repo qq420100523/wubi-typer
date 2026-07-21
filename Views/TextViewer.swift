@@ -63,6 +63,9 @@ struct TextViewer: NSViewRepresentable {
         textView.onBecomeFirstResponder = { [onFocusChange] in
             onFocusChange?(true)
         }
+        textView.onResignFirstResponder = { [onFocusChange] in
+            onFocusChange?(false)
+        }
 
         if isEditable {
             // 输入模式：仅同步纯文本内容
@@ -173,14 +176,21 @@ struct TextViewer: NSViewRepresentable {
     }
 }
 
-/// 可拦截 becomeFirstResponder 的 NSTextView 子类
+/// 可拦截 becomeFirstResponder / resignFirstResponder 的 NSTextView 子类
 /// 用于将焦点事件传递给 SwiftUI
 private class EditableTextView: NSTextView {
     var onBecomeFirstResponder: (() -> Void)?
+    var onResignFirstResponder: (() -> Void)?
 
     override func becomeFirstResponder() -> Bool {
         let result = super.becomeFirstResponder()
         if result { onBecomeFirstResponder?() }
+        return result
+    }
+
+    override func resignFirstResponder() -> Bool {
+        let result = super.resignFirstResponder()
+        if result { onResignFirstResponder?() }
         return result
     }
 }

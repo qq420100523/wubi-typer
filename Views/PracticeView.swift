@@ -133,6 +133,13 @@ struct PracticeView: View {
         .onAppear {
             singleCharFocused = true
         }
+        .onChange(of: singleCharFocused) { _, focused in
+            if focused, viewModel.session.isPaused, viewModel.isActive {
+                viewModel.togglePause()
+            } else if !focused, viewModel.isActive, !viewModel.session.isPaused {
+                viewModel.togglePause()
+            }
+        }
     }
 
     private var targetCharColor: Color {
@@ -435,6 +442,8 @@ private struct InputArea: View, Equatable {
                 isEditable: true,
                 onFocusChange: { focused in
                     if focused, isPaused, isActive {
+                        onTogglePause()
+                    } else if !focused, !isPaused, isActive {
                         onTogglePause()
                     }
                 }
